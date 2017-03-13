@@ -1,0 +1,9 @@
+[package]
+name = "boleta"
+version = "0.1.0"
+authors = ["Pablo Opazo <paocamd@msn.com>"]
+
+[dependencies]
+curl = "0.4.6"
+clap = "2.20.5"
+chrono = "0.3"
