@@ -3,9 +3,10 @@ extern crate chrono;
 use chrono::prelude::*;
 
 // Curl libs
-extern crate curl;
-use std::io::{stdout, Write};
-use curl::easy::Easy;
+extern crate curl_easybuilder;
+use std::io::Write;
+use curl_easybuilder::EasyBuilder;
+
 
 // Write files libs
 use std::fs::File;
@@ -40,7 +41,7 @@ fn main() {
     let to = "Enterprise";
     let job = "some job";
     let notes = "send to my bank account";
-    let data = format!("from={}&\
+    let form = format!("from={}&\
                         to={}&\
                         number={}&\
                         date={}&\
@@ -51,19 +52,21 @@ fn main() {
                         notes={}", 
                         from, to, 1, today_parsed, today_last_month_day_parsed, job, 10, 30, notes);
 
-    print!("{}", data);
-
-
-    let mut easy = Easy::new();
-    easy.url("https://invoice-generator.com").unwrap();
-    easy.write_function(
-        |data| {
-            Ok(stdout().write(data).unwrap())
-        }).unwrap();
-    easy.perform().unwrap();
-
-    // Write files
+    //print!("{}", data);
+    let data_form = form.as_bytes();
     let mut file = File::create("Invoice.pdf").unwrap();
-    file.write_all(b"Hello, world!").unwrap();
+    let mut easy = EasyBuilder::new();
+    let mut buf = Vec::new();
 
+    let easy = easy.url("https://invoice-generator.com")
+        .post(true)
+        .post_fields_copy(data_form)
+        .write_function(move |data|{
+            buf.extend_from_slice(data);
+            file.write_all(&buf).unwrap();
+            Ok(data.len())
+        })
+        .result()
+        .unwrap();
+    easy.perform().unwrap();
 }
