@@ -7,6 +7,11 @@ extern crate curl_easybuilder;
 use std::io::Write;
 use curl_easybuilder::EasyBuilder;
 
+// Read env variables 
+use std::env;
+
+// Check path
+use std::path::Path;
 
 // Write files libs
 use std::fs::File;
@@ -26,6 +31,23 @@ fn last_day_of_month(year: i32, month: u32) -> u32 {
 }
  
 fn main() {
+
+    // Configuration
+    let home_path = match env::var("HOME") {
+            Ok(val) => val,
+            Err(_) => "/".to_string(),
+    };
+
+    let configuration_file_path = format!("{}/.boleta.yml", home_path);
+    let path = Path::new(&configuration_file_path);
+    let display = path.display();
+
+    // Check if the file exists
+    if path.exists() {
+        println!("{} exists", display);
+    }
+
+
     // Today's time 
     let today = Local::now();
     let today_parsed = today.format("%b %d, %Y").to_string();
@@ -35,8 +57,7 @@ fn main() {
     println!("{}", today_parsed );
     println!("{}", today_last_month_day_parsed );
 
-    // Send data
-    // let mut data = "this is the body".as_bytes();
+    // Data creation
     let from = "Pablo";
     let to = "Enterprise";
     let job = "some job";
@@ -52,7 +73,8 @@ fn main() {
                         notes={}", 
                         from, to, 1, today_parsed, today_last_month_day_parsed, job, 10, 30, notes);
 
-    //print!("{}", data);
+
+    // Invoice request/file creation
     let data_form = form.as_bytes();
     let mut file = File::create("Invoice.pdf").unwrap();
     let mut easy = EasyBuilder::new();
