@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Pablo Opazo <paocamd@msn.com>"]
 
 [dependencies]
+yaml-rust = "*"
 curl-easybuilder = "0.1"
 clap = "2.20.5"
 chrono = "0.3"

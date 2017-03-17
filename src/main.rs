@@ -10,8 +10,17 @@ use curl_easybuilder::EasyBuilder;
 // Read env variables 
 use std::env;
 
+// Read file
+use std::io::prelude::*;
+
+
 // Check path
 use std::path::Path;
+
+// YAML
+extern crate yaml_rust;
+use yaml_rust::{YamlLoader, YamlEmitter};
+
 
 // Write files libs
 use std::fs::File;
@@ -44,7 +53,19 @@ fn main() {
 
     // Check if the file exists
     if path.exists() {
-        println!("{} exists", display);
+        println!("The configuration file {} already exists", display);
+    } else {
+        let mut configuration_file = File::create(path).unwrap();
+        let configuration_bootstrap = "from: pablo
+bill-to: company
+service: contractor for some company
+notes: send me more money
+hours: 140
+cost-per-hour: 30
+last-invoice-number: 20
+invoice-folder-path: /home/pablo/invoices";
+
+        configuration_file.write_all(configuration_bootstrap.as_bytes());
     }
 
 
@@ -58,20 +79,38 @@ fn main() {
     println!("{}", today_last_month_day_parsed );
 
     // Data creation
-    let from = "Pablo";
-    let to = "Enterprise";
-    let job = "some job";
-    let notes = "send to my bank account";
-    let form = format!("from={}&\
-                        to={}&\
-                        number={}&\
-                        date={}&\
-                        due_date={}&\
-                        items[0][name]={}&\
-                        items[0][quantity]={}&\
-                        items[0][unit_cost]={}&\
-                        notes={}", 
-                        from, to, 1, today_parsed, today_last_month_day_parsed, job, 10, 30, notes);
+    // Load data from YAML
+    let mut configuration_file = File::open(&configuration_file_path).unwrap();
+    let mut configuration_file_string = String::new();
+    match configuration_file.read_to_string(&mut configuration_file_string) {
+        Err(why) => panic!("couldn't read"),
+        Ok(_) => print!("Success!"),
+    }
+    let bill_load = YamlLoader::load_from_str(&configuration_file_string).unwrap();
+    let bill = &bill_load[0];
+    
+    
+    // TODO Refactor with match
+    let from         = bill["from"].as_str().unwrap();
+    let to           = bill["bill-to"].as_str().unwrap();
+    let job          = bill["service"].as_str().unwrap();
+    let notes        = bill["notes"].as_str().unwrap();
+    let hours        = bill["hours"].as_i64().unwrap();
+    let cost         = bill["cost-per-hour"].as_i64().unwrap();
+    let number       = bill["last-invoice-number"].as_i64().unwrap();
+    let form         = format!("from={}&\
+                                to={}&\
+                                number={}&\
+                                date={}&\
+                                due_date={}&\
+                                items[0][name]={}&\
+                                items[0][quantity]={}&\
+                                items[0][unit_cost]={}&\
+                                notes={}", 
+                                from, to, number, today_parsed, today_last_month_day_parsed, job, hours, cost, notes);
+
+   
+    println!("{:?}", form );
 
 
     // Invoice request/file creation
