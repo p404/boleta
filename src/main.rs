@@ -1,29 +1,27 @@
-// Chrono libs
+
+// Standard libraries
+use std::io::Write;
+use std::io::prelude::*;
+use std::env;
+use std::path::Path;
+use std::fs::File;
+
+// Chrono 
 extern crate chrono;
 use chrono::prelude::*;
 
-// Curl libs
+// Curl 
 extern crate curl_easybuilder;
-use std::io::Write;
 use curl_easybuilder::EasyBuilder;
-
-// Read env variables 
-use std::env;
-
-// Read file
-use std::io::prelude::*;
-
-
-// Check path
-use std::path::Path;
 
 // YAML
 extern crate yaml_rust;
 use yaml_rust::{YamlLoader, YamlEmitter};
 
-
-// Write files libs
-use std::fs::File;
+// CLI
+extern crate clap;
+mod cli;
+use cli::build_cli;
 
 // Chrono functions
 fn is_leap_year(year: i32) -> bool {
@@ -41,32 +39,8 @@ fn last_day_of_month(year: i32, month: u32) -> u32 {
  
 fn main() {
 
-    // Configuration
-    let home_path = match env::var("HOME") {
-            Ok(val) => val,
-            Err(_) => "/".to_string(),
-    };
-
-    let configuration_file_path = format!("{}/.boleta.yml", home_path);
-    let path = Path::new(&configuration_file_path);
-    let display = path.display();
-
-    // Check if the file exists
-    if path.exists() {
-        println!("The configuration file {} already exists", display);
-    } else {
-        let mut configuration_file = File::create(path).unwrap();
-        let configuration_bootstrap = "from: pablo
-bill-to: company
-service: contractor for some company
-notes: send me more money
-hours: 140
-cost-per-hour: 30
-last-invoice-number: 20
-invoice-folder-path: /home/pablo/invoices";
-
-        configuration_file.write_all(configuration_bootstrap.as_bytes());
-    }
+    let option = cli::build_cli();
+    let configure = option.value_of("configure").unwrap_or("default.conf");
 
 
     // Today's time 
@@ -83,7 +57,7 @@ invoice-folder-path: /home/pablo/invoices";
     let mut configuration_file = File::open(&configuration_file_path).unwrap();
     let mut configuration_file_string = String::new();
     match configuration_file.read_to_string(&mut configuration_file_string) {
-        Err(why) => panic!("couldn't read"),
+        Err(why) => panic!("Couldn't read"),
         Ok(_) => print!("Success!"),
     }
     let bill_load = YamlLoader::load_from_str(&configuration_file_string).unwrap();
