@@ -1,15 +1,13 @@
-pub fn setup() {
+// Standard libraries
+use std::env;
+use std::path::Path;
+use std::fs::File;
+use std::io::Write;
 
-    let home_path = match env::var("HOME") {
-            Ok(val) => val,
-            Err(_) => "/".to_string(),
-    };
-
-    let configuration_file_path = format!("{}/.boleta.yml", home_path);
+pub fn setup(configuration_file_path: String) {
     let path = Path::new(&configuration_file_path);
     let display = path.display();
 
-    // Check if the file exists
     if path.exists() {
         println!("The configuration file {} already exists", display);
     } else {
