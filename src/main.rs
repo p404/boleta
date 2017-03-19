@@ -6,6 +6,7 @@ extern crate clap;
 use clap::{App, SubCommand};
 
 // Configuration
+#[macro_use] extern crate text_io;
 mod configuration;
 #[allow(unused_imports)]
 use configuration::setup;
