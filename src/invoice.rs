@@ -19,6 +19,13 @@ fn last_day_of_month(year: i32, month: u32) -> u32 {
     }
 }
 
+// fn configuration_update(bill: &Yaml, path: String ){
+//     println!("{:?}", bill);
+
+//     let mut configuration_file = File::create(path).unwrap();
+//     configuration_file.write_all(data.as_bytes());
+// }
+
 pub fn create(configuration_file_path: String){
     // Todays time 
     let today = Local::now();
@@ -31,7 +38,7 @@ pub fn create(configuration_file_path: String){
     let mut configuration_file_string = String::new();
     match configuration_file.read_to_string(&mut configuration_file_string) {
         Err(_)    => panic!("Couldn't read configuration file"),
-        Ok(_)     => print!("Success!\n"),
+        Ok(_)     => (),
     }
     let bill_load = YamlLoader::load_from_str(&configuration_file_string).unwrap();
     let bill = &bill_load[0];
@@ -43,7 +50,7 @@ pub fn create(configuration_file_path: String){
     let hours        = bill["hours"].as_i64().unwrap();
     let cost         = bill["cost-per-hour"].as_i64().unwrap();
     let number       = bill["last-invoice-number"].as_i64().unwrap();
-    
+    let invoice_path = bill["invoice-folder-path"].as_str().unwrap();
     let form         = format!("from={}&\
                                 to={}&\
                                 number={}&\
@@ -57,7 +64,9 @@ pub fn create(configuration_file_path: String){
 
     // Invoice request/file creation
     let data_form = form.as_bytes();
-    let mut file = File::create("Invoice.pdf").unwrap();
+    let mut file_path = format!("{}/Invoice-{}.pdf", invoice_path, number + 1);
+    let file_path_clone = file_path.clone();
+    let mut file = File::create(file_path).unwrap();
     let mut easy = EasyBuilder::new();
     let mut buf = Vec::new();
 
@@ -67,6 +76,7 @@ pub fn create(configuration_file_path: String){
         .write_function(move |data|{
             buf.extend_from_slice(data);
             file.write_all(&buf).unwrap();
+            println!("You invoice has been created! at {}", file_path_clone);
             Ok(data.len())
         })
         .result()

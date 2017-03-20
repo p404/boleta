@@ -14,40 +14,46 @@ fn confirmation() -> bool{
             _ => return false,
         }
 }
+// macro_rules! ask_input {
+//     (string => $e:expr) => (
+//         println!("{}", $e);
+//     )
+// }
+
 fn configuration_bootstrap(path: &Path) {
-// This need refactor; read! implementation   
+// This need to be refactored
     println!("From:");
-    let from: String = read!();
+    let from: String = read!("{}\n");
 
     println!("Bill to:");
-    let bill_to: String = read!();
+    let bill_to: String = read!("{}\n");
 
     println!("Last invoice number:");
-    let number: String = read!();
+    let last_invoice_number: String = read!();
 
     println!("Service:");
-    let job: String = read!();
+    let job: String = read!("{}\n");
 
     println!("Hours:");
-    let hours: String = read!();
+    let hours: String = read!("{}\n");
 
     println!("Cost per hour:");
-    let cost: String = read!();
+    let cost: String = read!("{}\n");
 
     println!("Notes:");
-    let notes: String = read!();
+    let notes: String = read!("{}\n");
 
     println!("Invoices folder path");
-    let invoice_folder_path: String = read!();
+    let invoice_folder_path: String = read!("{}\n");
 
     let data = format!("from: {} 
 bill-to: {}
-last-invoice-numberumber: {}
+last-invoice-number: {}
 service: {}
 hours: {}
 cost-per-hour: {}
 notes: {} 
-invoice_folder_path: {}", from, bill_to, number, job, hours, cost, notes, invoice_folder_path);
+invoice-folder-path: {}", from, bill_to, last_invoice_number, job, hours, cost, notes, invoice_folder_path);
 
     let mut configuration_file = File::create(path).unwrap();
     configuration_file.write_all(data.as_bytes());
