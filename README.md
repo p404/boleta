@@ -1,4 +1,4 @@
-# Boleta
+# Boleta [![Build Status](https://travis-ci.org/p404/boleta.svg?branch=master)](https://travis-ci.org/p404/boleta)
 
 Boleta is a small CLI application for generating invoices.
 
