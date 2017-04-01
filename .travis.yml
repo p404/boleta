@@ -1,0 +1,16 @@
+language: rust
+os:
+  - linux
+  - osx
+after_success:
+  - cargo build --release
+deploy:
+  provider: releases
+  file:
+    - target/release/boleta-$TRAVIS_OS_NAME
+  skip_cleanup: true
+  on:
+    tags: true
+    all_branches: true
+notifications:
+  email: false
