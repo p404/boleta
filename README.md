@@ -5,6 +5,9 @@ Boleta is a small CLI application for generating invoices.
 Binaries can be found under Releases
 
 ### Installing
+```bash
+curl -sL https://raw.githubusercontent.com/p404/boleta/master/install.sh | bash
+```
 
 ### Usage
 ```bash
