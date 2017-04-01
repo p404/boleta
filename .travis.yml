@@ -1,16 +1,15 @@
 language: rust
 os:
-  - linux
-  - osx
+- linux
+- osx
 after_success:
-  - cargo build --release
+- cargo build --release
 deploy:
   provider: releases
-  file:
-    - target/release/boleta-$TRAVIS_OS_NAME
-  skip_cleanup: true
+  api_key:
+    secure: KbDqnDvgfliizC8pSrAN/blxcdnXHqGVOJWq9RgOEaP8OYQlwy3tnjIT0XAQtTzCPM5OAv9IIT/58ZjKXfvCgVejb4u92KWYccqbeIqPb0TGf8jY62s0qLgD4J2h04hcYNRbjW4DGQzT0X6Blv5lTAlF3+E0a+LgcXZkfHNDZ70tCVypfH+8zU5ENEAohG4EtNO4ogoxgrqzyQDkh3zCRSsPHUON51zQppvTwPl6VDQuaQJ+JfdoaS8CKNZOzpy8PF6UjbjAkq8GfiOy8hdiHtCRXTDPD5nlV0vGdrPR/qbeK0Fx+p3LS3Ip2dXvI1+c6N2Mvr0ly8E2SWY3O3flZZNagzkv11nv8kn2zog2LprWnxtVep1uP3X+Vjxf7XAZ8sfFIvfg1e7TAojGHT61Vami7GTGDnzzdwh3EmHUYoNQl1POhOFFqufq3hXLJ3yo2KksRYnn607mj5K/u50Xu7laCT3R0KdMK1iPl4T5JwIbmTasDDL4FmIksHlZMyQlIU9Pb5779p3YuJWLXSxyu+lb7qO3oqRauiErt5mklqGi6mfYQvCXBt79IBoce6CDINSqCL0Eyy1L+mM3DbwgF9GqeGFTPdVjaa55CZndUqbQR0fjvjVHyfmBTSmBWaQM7qEnId9TkaOQGFVx0vv9H9rX9nEuA09bcaLgOyJnQWc=
+  file: target/release/boleta
   on:
-    tags: true
-    all_branches: true
+    repo: p404/boleta
 notifications:
   email: false
