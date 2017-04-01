@@ -1,5 +1,4 @@
 // Standard libraries
-use std::env;
 use std::path::Path;
 use std::fs::File;
 use std::io;
@@ -14,36 +13,30 @@ fn confirmation() -> bool{
             _ => return false,
         }
 }
-// macro_rules! ask_input {
-//     (string => $e:expr) => (
-//         println!("{}", $e);
-//     )
-// }
 
 fn configuration_bootstrap(path: &Path) {
-// This need to be refactored
-    println!("From:");
+    println!("From: (e.g. John Doe)");
     let from: String = read!("{}\n");
 
-    println!("Bill to:");
+    println!("Bill to: (e.g. Enterprise, Inc)");
     let bill_to: String = read!("{}\n");
 
-    println!("Last invoice number:");
+    println!("Last invoice number: (e.g. 2)");
     let last_invoice_number: String = read!();
 
-    println!("Service:");
+    println!("Service: (e.g. Software engineer)");
     let job: String = read!("{}\n");
 
-    println!("Hours:");
+    println!("Hours: (e.g. 160)");
     let hours: String = read!("{}\n");
 
-    println!("Cost per hour:");
+    println!("Cost per hour: (e.g. 20.00)");
     let cost: String = read!("{}\n");
 
-    println!("Notes:");
+    println!("Notes: (e.g. Please make a direct deposit)");
     let notes: String = read!("{}\n");
 
-    println!("Invoices folder path");
+    println!("Invoices folder path (e.g. /home/john/)");
     let invoice_folder_path: String = read!("{}\n");
 
     let data = format!("from: {} 
@@ -56,7 +49,7 @@ notes: {}
 invoice-folder-path: {}", from, bill_to, last_invoice_number, job, hours, cost, notes, invoice_folder_path);
 
     let mut configuration_file = File::create(path).unwrap();
-    configuration_file.write_all(data.as_bytes());
+    configuration_file.write_all(data.as_bytes()).unwrap();
 }
 
 pub fn setup(configuration_file_path: String) {

@@ -29,7 +29,7 @@ fn configuration_path() -> String {
 
 fn main() {
     let options = App::new("Boleta")
-                    .author("Pablo Opazo <paocamd@msn.com>")
+                    .author("Pablo Opazo <pablo@sequel.ninja>")
                     .about("CLI For creating invoices")
                     .version("0.1.0")
                     .subcommand(SubCommand::with_name("configure").about("Sets configuration for invoices"))

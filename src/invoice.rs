@@ -2,7 +2,7 @@
 use chrono::prelude::*;
 use std::io::prelude::*;
 use std::fs::File;
-use yaml_rust::{YamlLoader, YamlEmitter};
+use yaml_rust::YamlLoader;
 use curl_easybuilder::EasyBuilder;
 
 
@@ -18,13 +18,6 @@ fn last_day_of_month(year: i32, month: u32) -> u32 {
         _ => panic!("invalid month: {}" , month),
     }
 }
-
-// fn configuration_update(bill: &Yaml, path: String ){
-//     println!("{:?}", bill);
-
-//     let mut configuration_file = File::create(path).unwrap();
-//     configuration_file.write_all(data.as_bytes());
-// }
 
 pub fn create(configuration_file_path: String){
     // Todays time 
@@ -48,9 +41,10 @@ pub fn create(configuration_file_path: String){
     let job          = bill["service"].as_str().unwrap();
     let notes        = bill["notes"].as_str().unwrap();
     let hours        = bill["hours"].as_i64().unwrap();
-    let cost         = bill["cost-per-hour"].as_i64().unwrap();
+    let cost         = bill["cost-per-hour"].as_f64().unwrap();
     let number       = bill["last-invoice-number"].as_i64().unwrap();
     let invoice_path = bill["invoice-folder-path"].as_str().unwrap();
+    let item         = format!("{} - {}", job, today_last_month_day_parsed);
     let form         = format!("from={}&\
                                 to={}&\
                                 number={}&\
@@ -60,11 +54,11 @@ pub fn create(configuration_file_path: String){
                                 items[0][quantity]={}&\
                                 items[0][unit_cost]={}&\
                                 notes={}", 
-                                from, to, number, today_parsed, today_last_month_day_parsed, job, hours, cost, notes);
+                                from, to, number + 1, today_parsed, today_last_month_day_parsed, item, hours, cost, notes);
 
     // Invoice request/file creation
     let data_form = form.as_bytes();
-    let mut file_path = format!("{}/Invoice-{}.pdf", invoice_path, number + 1);
+    let  file_path = format!("{}/Invoice-{}.pdf", invoice_path, number + 1);
     let file_path_clone = file_path.clone();
     let mut file = File::create(file_path).unwrap();
     let mut easy = EasyBuilder::new();
@@ -76,10 +70,23 @@ pub fn create(configuration_file_path: String){
         .write_function(move |data|{
             buf.extend_from_slice(data);
             file.write_all(&buf).unwrap();
-            println!("You invoice has been created! at {}", file_path_clone);
             Ok(data.len())
         })
         .result()
         .unwrap();
     easy.perform().unwrap();
+
+    let data = format!("from: {} 
+bill-to: {}
+last-invoice-number: {}
+service: {}
+hours: {}
+cost-per-hour: {}
+notes: {} 
+invoice-folder-path: {}", from, to, number + 1, job, hours, cost, notes, invoice_path);
+    
+    let mut configuration_file = File::create(&configuration_file_path).unwrap();
+    configuration_file.write_all(data.as_bytes()).unwrap();
+
+    println!("You invoice has been created! at {}", file_path_clone);
 }
