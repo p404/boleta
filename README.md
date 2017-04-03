@@ -1,6 +1,8 @@
 # Boleta [![Build Status](https://travis-ci.org/p404/boleta.svg?branch=master)](https://travis-ci.org/p404/boleta)
 
-Boleta is a small CLI application for generating invoices.
+Boleta is a small CLI application for generating invoices. 
+
+Boleta stores your invoice configuration `$HOME/.boleta.yml` to generate new invoices.  
 
 Binaries can be found under [releases](https://github.com/p404/boleta/releases)
 
